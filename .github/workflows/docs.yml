@@ -1,28 +1,24 @@
-name: docs
-
-on:
-  push:
-    branches: 
-    - master
-    paths:
-    - .github/workflows/docs.yml
-    - site-gh-pages.yml
-    - 'documentation/**'
-
 jobs:
   build-and-publish:
-    runs-on: [ubuntu-latest]
+    runs-on: self-hosted
     steps:
-    - name: Checkout project
+    - continue-on-error: true
+      name: Checkout project
       uses: actions/checkout@v2
-    - name: Run antora
+    - continue-on-error: true
+      name: Run antora
       uses: docker://antora/antora:2.3.1
       with:
         args: site-gh-pages.yml
-    - name: Deploy to GitHub Pages
+    - continue-on-error: true
+      name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@releases/v3
       with:
-        GITHUB_TOKEN: "${{github.token}}"
-        FOLDER: gh-pages
         BRANCH: gh-pages
-        COMMIT_MESSAGE: "[docs] Publishing the docs for commit(s) ${{github.sha}}"
+        COMMIT_MESSAGE: '[docs] Publishing the docs for commit(s) ${{github.sha}}'
+        FOLDER: gh-pages
+        GITHUB_TOKEN: ${{github.token}}
+name: docs
+on:
+  repository_dispatch:
+    types: trigger-ga___docs.yml
